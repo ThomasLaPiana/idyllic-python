@@ -1,8 +1,8 @@
 # Idyllic Python
 
-[![CI/CD Pipeline](https://github.com/yourusername/idyllic-python/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/idyllic-python/actions/workflows/ci.yml)
-[![Release Pipeline](https://github.com/yourusername/idyllic-python/actions/workflows/release.yml/badge.svg)](https://github.com/yourusername/idyllic-python/actions/workflows/release.yml)
-[![Maintenance](https://github.com/yourusername/idyllic-python/actions/workflows/maintenance.yml/badge.svg)](https://github.com/yourusername/idyllic-python/actions/workflows/maintenance.yml)
+[![CI/CD Pipeline](https://github.com/ThomasLaPiana/idyllic-python/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/idyllic-python/actions/workflows/ci.yml)
+[![Release Pipeline](https://github.com/ThomasLaPiana/idyllic-python/actions/workflows/release.yml/badge.svg)](https://github.com/yourusername/idyllic-python/actions/workflows/release.yml)
+[![Maintenance](https://github.com/ThomasLaPiana/idyllic-python/actions/workflows/maintenance.yml/badge.svg)](https://github.com/yourusername/idyllic-python/actions/workflows/maintenance.yml)
 
 A comprehensive template for modern Python web applications, demonstrating industry best practices, comprehensive tooling, and automated workflows. Built with [Litestar](https://litestar.dev/) and designed as a production-ready foundation for new projects.
 
@@ -10,23 +10,24 @@ A comprehensive template for modern Python web applications, demonstrating indus
 
 This repository serves as a reference implementation and template that incorporates:
 
-- **Modern Architecture**: Clean dependency injection, type safety, and SOLID principles
+- **Modern Libraries**: Uses the most modern and forward-looking libraries and frameworks
 - **Comprehensive Tooling**: Essential development tools with proper configuration
 - **Production-Ready CI/CD**: Automated quality gates, testing, and deployment
-- **Quality Excellence**: Consistent high-quality code standards
-- **Security Focus**: Automated vulnerability scanning and dependency management
-- **Complete Documentation**: Clear and maintainable project documentation
+- **Quality Excellence**: Enforces coding excellence via automatic checks
+- **Security Conscience**: Automated vulnerability scanning and dependency management
 
 **Use Cases**: Starting new projects, upgrading existing codebases, or learning modern Python development practices.
 
-## Key Features
+## Key Features & Benefits
 
-### Modern Architecture & Design
+### Modern Architecture & Quality Standards
 
 - **Dependency Injection**: Clean, testable architecture using Litestar's DI system
 - **Type Safety**: Full type annotations with mypy validation (100% coverage)
+- **Perfect Code Quality**: Extremely strict linting and analysis (Ruff, Pylint)
+- **Zero Security Vulnerabilities**: Clean pip-audit results with automated scanning
+- **Low Complexity**: All functions rated 'A' for maintainability
 - **SOLID Principles**: Proper separation of concerns and clean code practices
-- **Modern Python**: Leverages Python 3.11+ features and best practices
 
 ### Comprehensive Development Tooling
 
@@ -46,28 +47,23 @@ This repository serves as a reference implementation and template that incorpora
 - **Automated Releases**: Tag-triggered releases with changelog generation
 - **Dependency Updates**: Weekly automated dependency updates with quality validation
 
-### Quality Standards
-
-- **High Code Quality**: 10.0/10 Pylint score, 100% type coverage
-- **Comprehensive Testing**: Unit tests, integration tests, and coverage reporting
-- **Security Focus**: Automated vulnerability scanning and dependency auditing
-- **Complete Documentation**: Clear documentation with examples
-
-### Developer Experience
+### Developer Experience & Template Benefits
 
 - **Make Integration**: Simple commands for all development tasks
-- **Local Testing**: Full CI/CD pipeline simulation locally
-- **IDE Support**: Proper configuration for VS Code, PyCharm, and other IDEs
+- **Immediate Productivity**: Start coding features immediately, no boilerplate setup needed
+- **Quality Assurance**: Built-in quality gates prevent technical debt accumulation
+- **Team Onboarding**: Clear patterns and consistent tooling
 - **Hot Reloading**: Development server with automatic reload
 
-## Features
+### Learning Resource
 
-- **Modern Python Web Framework**: Built with Litestar, a high-performance ASGI framework
-- **Type Safety**: Full type hints and Pydantic models for request/response validation
-- **Comprehensive Testing**: Complete test suite using Litestar's TestClient
-- **Development Tools**: Pre-configured with Black, isort, mypy, and Ruff for code quality
-- **Package Management**: Uses `uv` for fast and reliable dependency management
-- **Clean Architecture**: Well-organized project structure following Python best practices
+This repository serves as a comprehensive example of:
+
+- Modern Python project structure and best practices
+- Industry-standard tooling configuration
+- CI/CD automation and quality gates
+- Testing strategies and coverage reporting
+- Documentation standards and maintenance practices
 
 ## API Endpoints
 
@@ -103,8 +99,7 @@ idyllic-python/
 
 ## Requirements
 
-- Python 3.8+
-- [uv](https://github.com/astral-sh/uv) package manager
+- [uv](https://github.com/astral-sh/uv) manages everything
 
 ## Quick Start
 
@@ -144,55 +139,6 @@ idyllic-python/
    - Visit `http://127.0.0.1:8000` to see your app
    - Modify `src/idyllic_python/main.py` to add your features
    - Use `make help` to see all available commands
-
-## Template Customization Guide
-
-### Essential Files to Update
-
-When using this as a template, update these key files:
-
-**Project Configuration:**
-
-- `pyproject.toml` - Update name, description, authors, and URLs
-- `Dockerfile` - Modify if you need different base image or dependencies
-- `.github/workflows/*.yml` - Update repository URLs in badges and deployment targets
-
-**Source Code:**
-
-- `src/idyllic_python/` - Rename package directory to match your project
-- `src/idyllic_python/main.py` - Replace example endpoints with your application logic
-- `tests/` - Update test files to match your new package structure
-
-**Documentation:**
-
-- `README.md` - Replace with your project's documentation
-- `LICENSE` - Update with your preferred license
-- `.github/SETUP.md` - Customize CI/CD setup instructions
-
-### Best Practices Included
-
-This template demonstrates:
-
-**Architecture Patterns:**
-
-- Dependency injection for testable, maintainable code
-- Clean separation between business logic and framework code
-- Type-safe interfaces and data models
-- Proper error handling and HTTP status codes
-
-**Development Workflow:**
-
-- Pre-commit hooks for code quality (via make targets)
-- Comprehensive testing strategy with fixtures and mocks
-- Local development environment that mirrors production
-- Documentation-driven development
-
-**Production Readiness:**
-
-- Multi-stage Docker builds for optimized images
-- Health checks and monitoring endpoints
-- Proper logging and error handling
-- Security best practices and vulnerability scanning
 
 ## Running the Application
 
@@ -322,22 +268,17 @@ Response:
 
 The project includes comprehensive tests using pytest and Litestar's TestClient.
 
-### Run all tests:
+### Run Tests
 
 ```bash
-uv run pytest
-```
+# Run all tests
+make test
 
-### Run tests with verbose output:
+# Run tests with coverage report
+make test-coverage
 
-```bash
-uv run pytest -v
-```
-
-### Run tests with coverage:
-
-```bash
-uv run pytest --cov=idyllic_python
+# Run tests in watch mode (automatically re-run on file changes)
+make test-watch
 ```
 
 ### Test Structure
@@ -346,46 +287,26 @@ uv run pytest --cov=idyllic_python
 - **`tests/test_endpoints.py`**: Individual endpoint tests organized by functionality
 - **`tests/test_app_integration.py`**: Integration tests and application-level tests
 
+### Test Coverage
+
 The tests cover:
 
-- All API endpoints
+- All API endpoints (health, users, hello)
 - Request/response validation
-- Error handling
-- Edge cases
+- Error handling and edge cases
 - Integration scenarios
+- Dependency injection functionality
+
+### Test Features
+
+- **Isolated Testing**: Each test uses fresh application state
+- **Comprehensive Fixtures**: Reusable test components in `conftest.py`
+- **Integration Testing**: Full request/response cycle testing
+- **Coverage Reporting**: Detailed coverage analysis with HTML reports
 
 ## Development Guide
 
 This section demonstrates the development workflow and tooling configuration.
-
-### Individual Quality Tools
-
-Each tool can be run independently for focused development:
-
-```bash
-# Code Formatting
-make black          # Format code with Black
-make isort          # Sort imports with isort
-make format         # Run both Black and isort
-
-# Linting & Analysis
-make ruff           # Fast linting with Ruff
-make ruff-fix       # Auto-fix issues with Ruff
-make lint           # Run linting (alias for ruff)
-make lint-fix       # Auto-fix linting issues
-
-# Type Checking
-make mypy           # Static type analysis
-
-# Code Quality Analysis
-make pylint         # Comprehensive code analysis
-make radon-cc       # Cyclomatic complexity analysis
-make radon-mi       # Maintainability index analysis
-make radon          # All complexity analysis
-
-# Security
-make pip-audit      # Security vulnerability scanning
-```
 
 ### Comprehensive Workflows
 
@@ -408,16 +329,6 @@ make run-prod       # Start production server
 make docker-build   # Build container image
 make docker-run     # Run containerized application
 ```
-
-### Development Approach
-
-This Makefile demonstrates industry best practices:
-
-- **Granular Control**: Run individual tools for focused debugging
-- **Composite Commands**: Combine related tools for efficient workflows
-- **Consistent Interface**: Same command structure across all tools
-- **Fast Feedback**: Parallel execution where possible
-- **CI/CD Ready**: Commands mirror exactly what runs in automation
 
 ### Code Quality Tools
 
@@ -551,50 +462,6 @@ The project includes comprehensive CI/CD workflows using GitHub Actions:
 - manual dispatch
 ```
 
-## What Makes This Template Valuable?
-
-### Measurable Quality
-
-- **Perfect Pylint Score**: 10.0/10 demonstrating code excellence
-- **100% Type Coverage**: Full mypy validation with no type errors
-- **Comprehensive Testing**: 21 tests covering all functionality
-- **Zero Security Vulnerabilities**: Clean pip-audit results
-- **Low Complexity**: All functions rated 'A' for maintainability
-
-### Modern Development Practices
-
-- **Dependency Injection**: Clean, testable architecture
-- **Type Safety**: Full type annotations throughout
-- **Automated Quality Gates**: No manual quality checks needed
-- **Container-First**: Docker-ready from day one
-- **Security-First**: Automated vulnerability scanning
-
-### Production-Ready Features
-
-- **Multi-Platform Support**: ARM64 and AMD64 Docker images
-- **Health Checks**: Built-in monitoring endpoints
-- **Proper Error Handling**: Structured error responses
-- **Logging Ready**: Structured logging configuration
-- **Scalable Architecture**: Clean separation of concerns
-
-### Learning Resource
-
-This repository serves as a comprehensive example of:
-
-- Modern Python project structure
-- Industry-standard tooling configuration
-- CI/CD best practices
-- Testing strategies
-- Documentation standards
-
-### Template Benefits
-
-- **Immediate Productivity**: Start coding features, not infrastructure
-- **Quality Assurance**: Built-in quality gates prevent technical debt
-- **Team Onboarding**: Clear patterns and documentation
-- **Maintenance**: Automated dependency updates and security scanning
-- **Scalability**: Architecture that grows with your project
-
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
