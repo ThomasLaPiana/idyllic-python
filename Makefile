@@ -164,12 +164,6 @@ docker-run: ## Run Docker container
 	@echo "$(BLUE)Running Docker container...$(RESET)"
 	docker run --rm -p 8000:8000 idyllic-python
 
-.PHONY: docker-run-prod
-docker-run-prod: ## Run production Docker container
-	@echo "$(BLUE)Running production Docker container...$(RESET)"
-	docker run --rm -p 8000:8000 idyllic-python:prod
-
-
 
 # =============================================================================
 # Utilities
