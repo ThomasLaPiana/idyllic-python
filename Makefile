@@ -121,7 +121,7 @@ pip-audit: ## Run security checks with pip-audit
 
 .PHONY: check-all
 check-all: black isort ruff-fix ruff pylint mypy radon pip-audit ## Run all quality checks
-	@echo "$(GREEN)Standard quality checks completed!$(RESET)"
+	@echo "$(GREEN)Exhaustive quality checks completed!$(RESET)"
 
 # =============================================================================
 # Docker

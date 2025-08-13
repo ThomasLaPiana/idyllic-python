@@ -216,26 +216,7 @@ make help
 make install
 
 # Run all code quality checks
-make check
-
-# Format code
-make format
-
-# Run linting
-make lint
-
-# Run type checking
-make typecheck
-
-# Run all code quality checks
-make check
-
-# Run comprehensive code analysis (includes complexity and security)
 make check-all
-
-# Run individual analysis tools
-make pylint
-make complexity
 
 # Run tests
 make test
