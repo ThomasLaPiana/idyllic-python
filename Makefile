@@ -18,29 +18,9 @@ RESET := \033[0m
 help: ## Show this help message
 	@echo "$(BLUE)Idyllic Python - Available Commands$(RESET)"
 	@echo ""
-	@echo "$(BLUE)Setup & Dependencies:$(RESET)"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | grep -E "^(install|deps)" | \
-		awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-18s$(RESET) %s\n", $$1, $$2}'
-	@echo ""
-	@echo "$(BLUE)Development:$(RESET)"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | grep -E "^(run|shell|docs)" | \
-		awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-18s$(RESET) %s\n", $$1, $$2}'
-	@echo ""
-	@echo "$(BLUE)Testing:$(RESET)"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | grep -E "^test" | \
-		awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-18s$(RESET) %s\n", $$1, $$2}'
-	@echo ""
-	@echo "$(BLUE)Code Quality:$(RESET)"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | grep -E "^(format|lint|typecheck|check|security)" | \
-		awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-18s$(RESET) %s\n", $$1, $$2}'
-	@echo ""
-	@echo "$(BLUE)Docker:$(RESET)"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | grep -E "^docker" | \
-		awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-18s$(RESET) %s\n", $$1, $$2}'
-	@echo ""
-	@echo "$(BLUE)Utilities:$(RESET)"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | grep -E "^(clean|build)" | \
-		awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-18s$(RESET) %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+		awk 'BEGIN {FS = ":.*?## "}; {printf "$(GREEN)%-20s$(RESET) %s\n", $$1, $$2}' | \
+		sort
 
 # =============================================================================
 # Setup & Dependencies
@@ -51,20 +31,10 @@ install: ## Install dependencies using uv
 	@echo "$(BLUE)Installing dependencies...$(RESET)"
 	uv sync
 
-.PHONY: install-dev
-install-dev: ## Install development dependencies
-	@echo "$(BLUE)Installing development dependencies...$(RESET)"
-	uv sync --group dev
-
 .PHONY: deps-update
 deps-update: ## Update all dependencies
 	@echo "$(BLUE)Updating dependencies...$(RESET)"
 	uv lock --upgrade
-
-.PHONY: deps-tree
-deps-tree: ## Show dependency tree
-	@echo "$(BLUE)Dependency tree:$(RESET)"
-	uv tree
 
 # =============================================================================
 # Development
@@ -80,75 +50,78 @@ run-prod: ## Run the production server
 	@echo "$(BLUE)Starting production server...$(RESET)"
 	uv run uvicorn idyllic_python.main:app --host 0.0.0.0 --port 8000
 
-.PHONY: shell
-shell: ## Start an interactive Python shell with the app loaded
-	@echo "$(BLUE)Starting Python shell...$(RESET)"
-	uv run python -c "from idyllic_python.main import app; print('App loaded. Available: app'); import code; code.interact(local=locals())"
-
-.PHONY: docs-serve
-docs-serve: ## Serve API documentation (starts server for OpenAPI docs)
-	@echo "$(BLUE)Starting server for API documentation...$(RESET)"
-	@echo "$(YELLOW)API docs will be available at: http://127.0.0.1:8000/schema$(RESET)"
-	@echo "$(YELLOW)Interactive docs at: http://127.0.0.1:8000/schema/swagger$(RESET)"
-	uv run uvicorn idyllic_python.main:app --host 127.0.0.1 --port 8000
-
 # =============================================================================
 # Testing
 # =============================================================================
 
-.PHONY: test
-test: ## Run all tests
-	@echo "$(BLUE)Running tests...$(RESET)"
-	uv run pytest
-
 .PHONY: test-verbose
-test-verbose: ## Run tests with verbose output
-	@echo "$(BLUE)Running tests with verbose output...$(RESET)"
+test: ## Run tests with verbose output
 	uv run pytest -v
 
 .PHONY: test-coverage
 test-coverage: ## Run tests with coverage report
-	@echo "$(BLUE)Running tests with coverage...$(RESET)"
 	uv run pytest --cov=idyllic_python --cov-report=term-missing
 
 .PHONY: test-watch
 test-watch: ## Run tests in watch mode
-	@echo "$(BLUE)Running tests in watch mode...$(RESET)"
 	uv run pytest-watch
 
 # =============================================================================
 # Code Quality
 # =============================================================================
 
-.PHONY: format
-format: ## Format code with black and isort
-	@echo "$(BLUE)Formatting code...$(RESET)"
+.PHONY: black
+black: ## Format code with black
+	@echo "$(BLUE)Formatting code with black...$(RESET)"
 	uv run black src/ tests/
+
+.PHONY: isort
+isort: ## Sort imports with isort
+	@echo "$(BLUE)Sorting imports with isort...$(RESET)"
 	uv run isort src/ tests/
 
-.PHONY: lint
-lint: ## Lint code with ruff
-	@echo "$(BLUE)Linting code...$(RESET)"
+.PHONY: ruff
+ruff: ## Lint code with ruff
+	@echo "$(BLUE)Linting code with ruff...$(RESET)"
 	uv run ruff check src/ tests/
 
-.PHONY: lint-fix
-lint-fix: ## Lint and fix code with ruff
-	@echo "$(BLUE)Linting and fixing code...$(RESET)"
+.PHONY: ruff-fix
+ruff-fix: ## Lint and fix code with ruff
+	@echo "$(BLUE)Linting and fixing code with ruff...$(RESET)"
 	uv run ruff check --fix src/ tests/
 
-.PHONY: typecheck
-typecheck: ## Run type checking with mypy
-	@echo "$(BLUE)Running type checks...$(RESET)"
+.PHONY: mypy
+mypy: ## Run type checking with mypy
+	@echo "$(BLUE)Running type checks with mypy...$(RESET)"
 	uv run mypy src/
 
-.PHONY: check
-check: format lint typecheck test ## Run all code quality checks
-	@echo "$(GREEN)All checks completed!$(RESET)"
+.PHONY: pylint
+pylint: ## Run code analysis with pylint
+	@echo "$(BLUE)Running code analysis with pylint...$(RESET)"
+	uv run pylint src/ tests/
 
-.PHONY: security
-security: ## Run security checks (requires pip-audit)
-	@echo "$(BLUE)Running security checks...$(RESET)"
+.PHONY: radon-cc
+radon-cc: ## Analyze cyclomatic complexity with radon
+	@echo "$(BLUE)Analyzing cyclomatic complexity...$(RESET)"
+	uv run radon cc src/ -s
+
+.PHONY: radon-mi
+radon-mi: ## Analyze maintainability index with radon
+	@echo "$(BLUE)Analyzing maintainability index...$(RESET)"
+	uv run radon mi src/ -s
+
+.PHONY: radon
+radon: radon-cc radon-mi ## Run all radon complexity analysis
+	@echo "$(GREEN)Complexity analysis completed!$(RESET)"
+
+.PHONY: pip-audit
+pip-audit: ## Run security checks with pip-audit
+	@echo "$(BLUE)Running security checks with pip-audit...$(RESET)"
 	uv run pip-audit
+
+.PHONY: check-all
+check-all: black isort ruff-fix ruff pylint mypy radon pip-audit ## Run all quality checks
+	@echo "$(GREEN)Standard quality checks completed!$(RESET)"
 
 # =============================================================================
 # Docker

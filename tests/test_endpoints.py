@@ -1,6 +1,5 @@
 """Tests for all API endpoints."""
 
-import pytest
 from litestar.status_codes import HTTP_200_OK, HTTP_201_CREATED, HTTP_404_NOT_FOUND
 from litestar.testing import TestClient
 

@@ -75,12 +75,20 @@ async def create_user(data: UserCreateRequest) -> UserResponse:
     """Create a new user."""
     global next_user_id
 
-    user_data = {"id": next_user_id, "name": data.name, "email": data.email}
+    user_data: Dict[str, Any] = {
+        "id": next_user_id,
+        "name": data.name,
+        "email": data.email,
+    }
 
     users_db[next_user_id] = user_data
     next_user_id += 1
 
-    return UserResponse(**user_data)
+    return UserResponse(
+        id=next_user_id - 1,
+        name=data.name,
+        email=data.email,
+    )
 
 
 def create_app() -> Litestar:

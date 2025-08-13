@@ -227,6 +227,16 @@ make lint
 # Run type checking
 make typecheck
 
+# Run all code quality checks
+make check
+
+# Run comprehensive code analysis (includes complexity and security)
+make check-all
+
+# Run individual analysis tools
+make pylint
+make complexity
+
 # Run tests
 make test
 
@@ -243,6 +253,15 @@ make docker-run
 
 ### Code Quality Tools
 
+The project includes comprehensive code quality tools:
+
+- **Black** - Code formatting
+- **isort** - Import sorting
+- **Ruff** - Fast Python linter with many rules
+- **mypy** - Static type checking
+- **Pylint** - Comprehensive code analysis
+- **Radon** - Code complexity analysis
+
 You can also run the tools directly:
 
 ```bash
@@ -257,6 +276,13 @@ uv run ruff check src/ tests/
 
 # Type checking with mypy
 uv run mypy src/
+
+# Code analysis with Pylint
+uv run pylint src/ tests/
+
+# Complexity analysis with Radon
+uv run radon cc src/ -s  # Cyclomatic complexity
+uv run radon mi src/ -s  # Maintainability index
 ```
 
 ### Adding Dependencies

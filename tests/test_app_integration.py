@@ -1,6 +1,5 @@
 """Integration tests for the application."""
 
-import pytest
 from litestar.testing import TestClient
 
 
