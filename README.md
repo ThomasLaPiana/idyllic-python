@@ -96,6 +96,18 @@ uvicorn idyllic_python.main:app --reload --host 127.0.0.1 --port 8000
 
 The application will be available at `http://127.0.0.1:8000`.
 
+### Using Docker
+
+```bash
+# Build and run with Docker
+make docker-build
+make docker-run
+
+# For production (multi-stage build)
+make docker-build-prod
+make docker-run-prod
+```
+
 ## API Usage Examples
 
 ### Health Check
@@ -223,6 +235,10 @@ make test-coverage
 
 # Clean up cache files
 make clean
+
+# Docker commands
+make docker-build
+make docker-run
 ```
 
 ### Code Quality Tools
