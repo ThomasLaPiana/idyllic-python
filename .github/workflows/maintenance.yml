@@ -1,0 +1,226 @@
+name: Maintenance
+
+on:
+  schedule:
+    # Run weekly on Sundays at 2 AM UTC
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  # Job 1: Dependency Updates
+  dependency-update:
+    name: Update Dependencies
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        version: "latest"
+    
+    - name: Set up Python
+      run: uv python install ${{ env.PYTHON_VERSION }}
+    
+    - name: Update dependencies
+      run: |
+        # Update dependencies
+        make deps-update
+        
+        # Check if there are changes
+        if git diff --quiet uv.lock; then
+          echo "No dependency updates available"
+          echo "HAS_UPDATES=false" >> $GITHUB_ENV
+        else
+          echo "Dependencies updated"
+          echo "HAS_UPDATES=true" >> $GITHUB_ENV
+        fi
+    
+    - name: Run quality checks on updated dependencies
+      if: env.HAS_UPDATES == 'true'
+      run: |
+        uv sync
+        make check-all
+    
+    - name: Create Pull Request
+      if: env.HAS_UPDATES == 'true'
+      uses: peter-evans/create-pull-request@v6
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: "chore: update dependencies"
+        title: "🔄 Automated Dependency Updates"
+        body: |
+          ## Automated Dependency Updates
+          
+          This PR contains automated dependency updates.
+          
+          ### Changes
+          - Updated dependencies to latest compatible versions
+          - All quality checks passed
+          
+          ### Verification
+          - ✅ All tests pass
+          - ✅ Code quality checks pass
+          - ✅ Security audit clean
+          
+          **Note**: This PR was created automatically by the maintenance workflow.
+        branch: automated/dependency-updates
+        delete-branch: true
+
+  # Job 2: Security Audit
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        version: "latest"
+    
+    - name: Set up Python
+      run: uv python install ${{ env.PYTHON_VERSION }}
+    
+    - name: Install dependencies
+      run: uv sync
+    
+    - name: Run security audit
+      run: make pip-audit
+    
+    - name: Upload security report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-audit-report
+        path: |
+          security-report.json
+        retention-days: 30
+
+  # Job 3: Code Quality Report
+  quality-report:
+    name: Generate Quality Report
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        version: "latest"
+    
+    - name: Set up Python
+      run: uv python install ${{ env.PYTHON_VERSION }}
+    
+    - name: Install dependencies
+      run: uv sync
+    
+    - name: Generate comprehensive quality report
+      run: |
+        mkdir -p reports
+        
+        # Pylint report
+        make pylint > reports/pylint-report.txt || true
+        
+        # Complexity report
+        make radon-cc > reports/complexity-report.txt || true
+        make radon-mi > reports/maintainability-report.txt || true
+        
+        # Test coverage
+        make test-coverage
+        uv run coverage html -d reports/coverage
+        
+        # Create summary report
+        cat > reports/quality-summary.md << EOF
+        # Code Quality Report
+        
+        Generated on: $(date)
+        
+        ## Pylint Score
+        \`\`\`
+        $(tail -n 5 reports/pylint-report.txt)
+        \`\`\`
+        
+        ## Complexity Analysis
+        \`\`\`
+        $(cat reports/complexity-report.txt)
+        \`\`\`
+        
+        ## Maintainability Index
+        \`\`\`
+        $(cat reports/maintainability-report.txt)
+        \`\`\`
+        
+        ## Test Coverage
+        See the [coverage report](./coverage/index.html) for detailed information.
+        EOF
+    
+    - name: Upload quality reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: quality-reports
+        path: reports/
+        retention-days: 30
+
+  # Job 4: Docker Image Maintenance
+  docker-maintenance:
+    name: Docker Image Maintenance
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Build test image
+      run: make docker-build
+    
+    - name: Test Docker image
+      run: |
+        # Start container
+        docker run -d -p 8000:8000 --name maintenance-test idyllic-python
+        sleep 10
+        
+        # Run health checks
+        curl -f http://localhost:8000/health
+        curl -f http://localhost:8000/
+        
+        # Check container logs
+        docker logs maintenance-test
+        
+        # Cleanup
+        docker stop maintenance-test
+        docker rm maintenance-test
+    
+    - name: Analyze image size
+      run: |
+        echo "## Docker Image Analysis" > docker-analysis.md
+        echo "" >> docker-analysis.md
+        echo "### Image Size" >> docker-analysis.md
+        docker images idyllic-python --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" >> docker-analysis.md
+        echo "" >> docker-analysis.md
+        echo "### Image Layers" >> docker-analysis.md
+        docker history idyllic-python >> docker-analysis.md
+    
+    - name: Upload Docker analysis
+      uses: actions/upload-artifact@v4
+      with:
+        name: docker-analysis
+        path: docker-analysis.md
+        retention-days: 30

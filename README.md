@@ -1,5 +1,9 @@
 # Idyllic Python
 
+[![CI/CD Pipeline](https://github.com/yourusername/idyllic-python/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/idyllic-python/actions/workflows/ci.yml)
+[![Release Pipeline](https://github.com/yourusername/idyllic-python/actions/workflows/release.yml/badge.svg)](https://github.com/yourusername/idyllic-python/actions/workflows/release.yml)
+[![Maintenance](https://github.com/yourusername/idyllic-python/actions/workflows/maintenance.yml/badge.svg)](https://github.com/yourusername/idyllic-python/actions/workflows/maintenance.yml)
+
 This is an example repository showing an "idyllic" setup for a basic Python web server application using [Litestar](https://litestar.dev/), a modern, fast, and flexible ASGI web framework.
 
 ## Features
@@ -308,6 +312,56 @@ For simplicity, this example uses in-memory storage. In a production application
 - A database (PostgreSQL, MySQL, etc.)
 - An ORM (SQLAlchemy, Tortoise ORM, etc.)
 - Proper data persistence and migrations
+
+## CI/CD Pipeline
+
+The project includes comprehensive CI/CD workflows using GitHub Actions:
+
+### Continuous Integration (`ci.yml`)
+- **Matrix-based parallelization** of all quality tools
+- **Multi-version Python testing** (3.11, 3.12, 3.13)
+- **Docker build verification**
+- **Security auditing**
+- **Automated package building**
+
+**Quality Tools (Parallelized):**
+- `black` - Code formatting
+- `isort` - Import sorting
+- `ruff` - Fast linting
+- `mypy` - Type checking
+- `pylint` - Code analysis
+- `radon-cc` - Complexity analysis
+- `radon-mi` - Maintainability index
+- `pip-audit` - Security audit
+
+### Release Pipeline (`release.yml`)
+- **Automated releases** on version tags
+- **Multi-platform Docker images** (AMD64, ARM64)
+- **PyPI package publishing**
+- **GitHub release creation** with changelog
+- **Comprehensive quality gate**
+
+### Maintenance (`maintenance.yml`)
+- **Weekly dependency updates**
+- **Automated security audits**
+- **Quality report generation**
+- **Docker image maintenance**
+
+### Workflow Triggers
+```yaml
+# CI runs on:
+- push to main/develop
+- pull requests
+- manual dispatch
+
+# Release runs on:
+- version tags (v*)
+- manual dispatch
+
+# Maintenance runs:
+- weekly (Sundays 2 AM UTC)
+- manual dispatch
+```
 
 ## License
 

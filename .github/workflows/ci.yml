@@ -1,0 +1,183 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  # Job 1: Code Quality Tools (Parallelized)
+  quality-checks:
+    name: Quality Check - ${{ matrix.tool }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tool:
+          - black
+          - isort
+          - ruff
+          - mypy
+          - pylint
+          - radon-cc
+          - radon-mi
+          - pip-audit
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        version: "latest"
+    
+    - name: Install dependencies
+      run: uv sync
+    
+    - name: Run ${{ matrix.tool }}
+      run: make ${{ matrix.tool }}
+
+  # Job 2: Tests (Multiple Python versions)
+  tests:
+    name: Tests - Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        version: "latest"
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      run: uv python install ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: uv sync
+    
+    - name: Run tests with coverage
+      run: make test-coverage
+
+  # Job 3: Docker Build Test
+  docker-build:
+    name: Docker Build Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Build Docker image
+      run: make docker-build
+    
+    - name: Test Docker image
+      run: |
+        # Start container in background
+        docker run -d -p 8000:8000 --name test-app idyllic-python
+        sleep 10
+        
+        # Test health endpoint
+        curl -f http://localhost:8000/health || exit 1
+        
+        # Test root endpoint
+        curl -f http://localhost:8000/ || exit 1
+        
+        # Cleanup
+        docker stop test-app
+        docker rm test-app
+
+  # Job 4: Security and Dependency Checks
+  security:
+    name: Security Checks
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        version: "latest"
+    
+    - name: Install dependencies
+      run: uv sync
+    
+    - name: Run security audit
+      run: make pip-audit
+    
+    - name: Check for dependency vulnerabilities
+      run: uv tree
+
+  # Job 5: Build and Package
+  build:
+    name: Build Package
+    runs-on: ubuntu-latest
+    needs: [quality-checks, tests]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        version: "latest"
+    
+    - name: Set up Python
+      run: uv python install ${{ env.PYTHON_VERSION }}
+    
+    - name: Install dependencies
+      run: uv sync
+    
+    - name: Build package
+      run: make build
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: python-package
+        path: dist/
+        retention-days: 7
+
+  # Job 6: Integration Test Summary
+  integration-summary:
+    name: Integration Test Summary
+    runs-on: ubuntu-latest
+    needs: [quality-checks, tests, docker-build, security, build]
+    if: always()
+    
+    steps:
+    - name: Check all jobs status
+      run: |
+        echo "Quality Checks: ${{ needs.quality-checks.result }}"
+        echo "Tests: ${{ needs.tests.result }}"
+        echo "Docker Build: ${{ needs.docker-build.result }}"
+        echo "Security: ${{ needs.security.result }}"
+        echo "Build: ${{ needs.build.result }}"
+        
+        if [[ "${{ needs.quality-checks.result }}" != "success" ]] || \
+           [[ "${{ needs.tests.result }}" != "success" ]] || \
+           [[ "${{ needs.docker-build.result }}" != "success" ]] || \
+           [[ "${{ needs.security.result }}" != "success" ]] || \
+           [[ "${{ needs.build.result }}" != "success" ]]; then
+          echo "❌ Some jobs failed"
+          exit 1
+        else
+          echo "✅ All jobs passed successfully"
+        fi
