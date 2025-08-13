@@ -1,8 +1,8 @@
 # Idyllic Python
 
-[![CI/CD Pipeline](https://github.com/ThomasLaPiana/idyllic-python/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/idyllic-python/actions/workflows/ci.yml)
-[![Release Pipeline](https://github.com/ThomasLaPiana/idyllic-python/actions/workflows/release.yml/badge.svg)](https://github.com/yourusername/idyllic-python/actions/workflows/release.yml)
-[![Maintenance](https://github.com/ThomasLaPiana/idyllic-python/actions/workflows/maintenance.yml/badge.svg)](https://github.com/yourusername/idyllic-python/actions/workflows/maintenance.yml)
+[![CI/CD Pipeline](https://github.com/ThomasLaPiana/idyllic-python/actions/workflows/ci.yml/badge.svg)](https://github.com/ThomasLaPiana/idyllic-python/actions/workflows/ci.yml)
+[![Release Pipeline](https://github.com/ThomasLaPiana/idyllic-python/actions/workflows/release.yml/badge.svg)](https://github.com/ThomasLaPiana/idyllic-python/actions/workflows/release.yml)
+[![Maintenance](https://github.com/ThomasLaPiana/idyllic-python/actions/workflows/maintenance.yml/badge.svg)](https://github.com/ThomasLaPiana/idyllic-python/actions/workflows/maintenance.yml)
 
 A comprehensive template for modern Python web applications, demonstrating industry best practices, comprehensive tooling, and automated workflows. Built with [Litestar](https://litestar.dev/) and designed as a production-ready foundation for new projects.
 
